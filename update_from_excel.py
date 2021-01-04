@@ -62,7 +62,11 @@ def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
           pad += '**'
         text += pad + segment['text'] + pad
 
-    result.append(str(text).replace('\n', '<br>').replace('\xa0', ' ').strip())
+    if type(text) == float:
+      text = int(text)
+    text = str(text).replace('\n', '<br>').replace('\xa0', ' ')
+    text = re.sub(r"_{3,}", '_', text, 0)
+    result.append(text.strip())
   return result
 
 

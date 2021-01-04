@@ -8,3 +8,4 @@ node_modules/
 # Dependency versions
 package-lock.json
 Cards Against Humanity.xls
+.vscode
