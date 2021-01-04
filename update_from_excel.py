@@ -1,10 +1,11 @@
+import json
+import re
+from pathlib import Path
+
+import casestyle
 import pandas as pd
 import xlrd
-from pathlib import Path
 from tqdm import tqdm
-import json
-import casestyle
-import re
 
 FILE_NAME = './Cards Against Humanity.xls'
 METADATA_DEFAULT = {
