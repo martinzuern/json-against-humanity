@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+tqdm = "*"
+xlrd = "*"
+casestyle = "*"
+openpyxl = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+update_from_excel = "python ./update_from_excel.py"
+compile_decks = "python ./compile_decks.py"
