@@ -29,7 +29,7 @@ def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
 
     # skip rows where cell is empty
     if not text_cell:
-      result.append('')
+      result.append(None)
       continue
 
     text = text_cell
@@ -67,8 +67,8 @@ def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
     if type(text) == float:
       text = int(text)
     text = str(text).replace('\n', '<br>').replace('\xa0', ' ')
-    text = re.sub(r"_{3,}", '_', text, 0)
-    result.append(text.strip())
+    text = re.sub(r"_{3,}", '_', text, 0).strip()
+    result.append(text if text else None)
   return result
 
 
@@ -132,7 +132,7 @@ df_prompts = df_prompts.iloc[1:].copy()
 df_prompts[1] = df_prompts[1].fillna(1).replace({'DRAW 2, PICK 3': 3, 'PICK 2': 2})
 df_prompts.columns = ['Card', 'Pick', 'Set', 'Sheet']
 
-df_prompts.dropna(subset=['Sheet'], inplace=True)
+df_prompts.dropna(inplace=True)
 df_prompts = df_prompts[df_prompts['Sheet'] != 'CAH Main Deck']
 
 for set_name, df in tqdm(df_prompts.groupby('Set')):
@@ -155,7 +155,7 @@ df_responses[6] = col_to_md(FILE_NAME, 'Master Cards List', 6, max_len=len(df_re
 df_responses = df_responses.iloc[1:].copy()
 df_responses.columns = ['Card', 'Set', 'Sheet']
 
-df_responses.dropna(subset=['Sheet'], inplace=True)
+df_responses.dropna(inplace=True)
 df_responses = df_responses[df_responses['Sheet'] != 'CAH Main Deck']
 
 for set_name, df in tqdm(df_responses.groupby('Set')):
