@@ -109,7 +109,7 @@ for col_idx, name in tqdm(version_idx.items()):
 
   update_metadata(dest, {
     'abbr': abbr,
-    'name': 'Base Set' if abbr == 'US' else 'Base Set ({} Version)'.format(name),
+    'name': 'Base Set' if name == 'US' else 'Base Set ({} Version)'.format(name),
     'icon': '',
     'official': True
   })
