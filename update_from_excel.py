@@ -3,6 +3,8 @@ import xlrd
 from pathlib import Path
 from tqdm import tqdm
 import json
+import casestyle
+import re
 
 FILE_NAME = './Cards Against Humanity.xls'
 METADATA_DEFAULT = {
@@ -59,8 +61,9 @@ def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
           pad += '**'
         text += pad + segment['text'] + pad
 
-    result.append(text.replace('\n', '<br>').replace('\xa0', ' ').strip())
+    result.append(str(text).replace('\n', '<br>').replace('\xa0', ' ').strip())
   return result
+
 
 def update_metadata(folder, new_data):
   target_file = folder / 'metadata.json'
@@ -69,13 +72,20 @@ def update_metadata(folder, new_data):
     with open(target_file, "r") as f:
       data = json.load(f)
   
-  data = {**METADATA_DEFAULT, **data, **new_data}
+  data = {**METADATA_DEFAULT, **new_data, **data}
   assert data['abbr']
   assert data['name']
 
   with open(target_file, "w") as f:
     json.dump(data, f, indent=2, sort_keys=True)
 
+
+def build_name(name_str):
+  name = name_str.replace('CAH:', '').replace('CAH :', '').strip()
+  
+  abbr = re.sub(r"""pack|\(.*?\)|[^A-Z0-9]""", ' ', name, 0, re.IGNORECASE | re.VERBOSE | re.DOTALL)
+  abbr = casestyle.kebabcase(abbr.strip())
+  return abbr, name
 
 ####
 print('Reading MAIN DECK...')
@@ -105,3 +115,53 @@ for col_idx, name in tqdm(version_idx.items()):
   df_tmp_resp = df_tmp[df_tmp[0] == 'Response'].iloc[:, 1:2]
   df_tmp_resp.to_csv(dest / 'responses.csv', header=False, index=False)
 print('MAIN DECK completed.')
+
+
+###
+print('Reading MASTER CARDS LIST ...')
+df_prompts = pd.read_excel(FILE_NAME, sheet_name='Master Cards List', header=None, usecols='A:D')
+df_prompts[0] = col_to_md(FILE_NAME, 'Master Cards List', 0, max_len=len(df_prompts.index))
+df_prompts = df_prompts.iloc[1:].copy()
+df_prompts[1] = df_prompts[1].fillna(1).replace({'DRAW 2, PICK 3': 3, 'PICK 2': 2})
+df_prompts.columns = ['Card', 'Pick', 'Set', 'Sheet']
+
+df_prompts = df_prompts[df_prompts['Sheet'] != 'CAH Main Deck']
+df_prompts = df_prompts[df_prompts['Sheet'].str.contains('CAH', na=False)]
+
+for set_name, df in tqdm(df_prompts.groupby('Set')):
+  abbr, name = build_name(set_name)
+  dest = Path('./decks') / abbr
+  dest.mkdir(parents=True, exist_ok=True)
+
+  update_metadata(dest, {
+    'abbr': abbr,
+    'name': name,
+    'official': True
+  })
+
+  df[['Card', 'Pick']].to_csv(dest / 'prompts.csv', header=False, index=False)
+
+##
+
+df_responses = pd.read_excel(FILE_NAME, sheet_name='Master Cards List', header=None, usecols='G:I')
+df_responses[6] = col_to_md(FILE_NAME, 'Master Cards List', 6, max_len=len(df_responses.index))
+df_responses = df_responses.iloc[1:].copy()
+df_responses.columns = ['Card', 'Set', 'Sheet']
+
+df_responses = df_responses[df_responses['Sheet'] != 'CAH Main Deck']
+df_responses = df_responses[df_responses['Sheet'].str.contains('CAH', na=False)]
+
+for set_name, df in tqdm(df_responses.groupby('Set')):
+  abbr, name = build_name(set_name)
+  dest = Path('./decks') / abbr
+  dest.mkdir(parents=True, exist_ok=True)
+
+  update_metadata(dest, {
+    'abbr': abbr,
+    'name': name,
+    'official': True
+  })
+
+  df[['Card']].to_csv(dest / 'responses.csv', header=False, index=False)
+
+print('Completed MASTER CARDS LIST')
