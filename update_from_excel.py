@@ -2,8 +2,16 @@ import pandas as pd
 import xlrd
 from pathlib import Path
 from tqdm import tqdm
+import json
 
 FILE_NAME = './Cards Against Humanity.xls'
+METADATA_DEFAULT = {
+  'abbr': '',
+  'name': '',
+  'icon': '',
+  'official': False,
+  'description': '- placeholder -'
+}
 
 def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
   result = []
@@ -54,6 +62,20 @@ def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
     result.append(text.replace('\n', '<br>').replace('\xa0', ' ').strip())
   return result
 
+def update_metadata(folder, new_data):
+  target_file = folder / 'metadata.json'
+  data = {}
+  if target_file.exists():
+    with open(target_file, "r") as f:
+      data = json.load(f)
+  
+  data = {**METADATA_DEFAULT, **data, **new_data}
+  assert data['abbr']
+  assert data['name']
+
+  with open(target_file, "w") as f:
+    json.dump(data, f, indent=2, sort_keys=True)
+
 
 ####
 print('Reading MAIN DECK...')
@@ -66,8 +88,16 @@ df[2] = df[2].fillna(1).replace({'DRAW 2, PICK 3': 3, 'PICK 2': 2})
 version_idx = df.iloc[0].drop_duplicates(keep='last')[3:].dropna()
 
 for col_idx, name in tqdm(version_idx.items()):
-  dest = Path('./decks') / 'Base-{}'.format(name)
+  abbr = 'Base-{}'.format(name)
+  dest = Path('./decks') / abbr
   dest.mkdir(parents=True, exist_ok=True)
+
+  update_metadata(dest, {
+    'abbr': abbr,
+    'name': 'Base Set' if abbr == 'US' else 'Base Set ({} Version)'.format(name),
+    'icon': '',
+    'official': True
+  })
 
   df_tmp = df[~df[col_idx].isna()].iloc[:, 0:3]
   df_tmp_prompt = df_tmp[df_tmp[0] == 'Prompt'].iloc[:, 1:3]
