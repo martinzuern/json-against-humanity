@@ -1,10 +1,5 @@
 {
   "name": "json-against-humanity",
   "license": "CC-BY-NC-SA-4.0",
-  "version": "2.0.1",
-  "devDependencies": {
-    "clean-text-utils": "^1.1.17",
-    "googleapis": "^45.0.0",
-    "nanoid": "^3.1.5"
-  }
+  "version": "2.0.1"
 }
