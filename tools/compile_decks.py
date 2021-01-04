@@ -31,7 +31,7 @@ def append_black(card):
   return len(black) - 1
 
 
-deck_folders = list(Path('./decks').glob('*'))
+deck_folders = list(Path('../decks').glob('*'))
 for deck in tqdm(deck_folders):
   pack = get_metadata(deck)
   
@@ -47,7 +47,7 @@ for deck in tqdm(deck_folders):
   
   packs.append(pack)
 
-with open('cah-all-compact.json', "w") as f:
+with open('../cah-all-compact.json', "w") as f:
   data = {
     'white': white,
     'black': black,

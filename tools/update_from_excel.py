@@ -8,6 +8,8 @@ import xlrd
 from tqdm import tqdm
 
 FILE_NAME = './Cards Against Humanity.xls'
+DEST_BASE_FOLDER = Path('../decks')
+
 METADATA_DEFAULT = {
   'abbr': '',
   'name': '',
@@ -104,7 +106,7 @@ version_idx = df.iloc[0].drop_duplicates(keep='last')[3:].dropna()
 
 for col_idx, name in tqdm(version_idx.items()):
   abbr = 'Base-{}'.format(name)
-  dest = Path('./decks') / abbr
+  dest = DEST_BASE_FOLDER / abbr
   dest.mkdir(parents=True, exist_ok=True)
 
   update_metadata(dest, {
@@ -135,7 +137,7 @@ df_prompts = df_prompts[df_prompts['Sheet'] != 'CAH Main Deck']
 
 for set_name, df in tqdm(df_prompts.groupby('Set')):
   abbr, name = build_name(set_name)
-  dest = Path('./decks') / abbr
+  dest = DEST_BASE_FOLDER / abbr
   dest.mkdir(parents=True, exist_ok=True)
 
   update_metadata(dest, {
@@ -158,7 +160,7 @@ df_responses = df_responses[df_responses['Sheet'] != 'CAH Main Deck']
 
 for set_name, df in tqdm(df_responses.groupby('Set')):
   abbr, name = build_name(set_name)
-  dest = Path('./decks') / abbr
+  dest = DEST_BASE_FOLDER / abbr
   dest.mkdir(parents=True, exist_ok=True)
 
   update_metadata(dest, {
