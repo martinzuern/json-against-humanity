@@ -130,8 +130,8 @@ df_prompts = df_prompts.iloc[1:].copy()
 df_prompts[1] = df_prompts[1].fillna(1).replace({'DRAW 2, PICK 3': 3, 'PICK 2': 2})
 df_prompts.columns = ['Card', 'Pick', 'Set', 'Sheet']
 
+df_prompts.dropna(subset=['Sheet'], inplace=True)
 df_prompts = df_prompts[df_prompts['Sheet'] != 'CAH Main Deck']
-df_prompts = df_prompts[df_prompts['Sheet'].str.contains('CAH', na=False)]
 
 for set_name, df in tqdm(df_prompts.groupby('Set')):
   abbr, name = build_name(set_name)
@@ -141,7 +141,7 @@ for set_name, df in tqdm(df_prompts.groupby('Set')):
   update_metadata(dest, {
     'abbr': abbr,
     'name': name,
-    'official': True
+    'official': ('CAH' in df['Sheet'].values[0])
   })
 
   df[['Card', 'Pick']].to_csv(dest / 'prompts.csv', header=False, index=False)
@@ -153,8 +153,8 @@ df_responses[6] = col_to_md(FILE_NAME, 'Master Cards List', 6, max_len=len(df_re
 df_responses = df_responses.iloc[1:].copy()
 df_responses.columns = ['Card', 'Set', 'Sheet']
 
+df_responses.dropna(subset=['Sheet'], inplace=True)
 df_responses = df_responses[df_responses['Sheet'] != 'CAH Main Deck']
-df_responses = df_responses[df_responses['Sheet'].str.contains('CAH', na=False)]
 
 for set_name, df in tqdm(df_responses.groupby('Set')):
   abbr, name = build_name(set_name)
@@ -164,7 +164,7 @@ for set_name, df in tqdm(df_responses.groupby('Set')):
   update_metadata(dest, {
     'abbr': abbr,
     'name': name,
-    'official': True
+    'official': ('CAH' in df['Sheet'].values[0])
   })
 
   df[['Card']].to_csv(dest / 'responses.csv', header=False, index=False)
