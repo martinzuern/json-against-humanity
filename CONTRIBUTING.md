@@ -13,7 +13,7 @@ Then, run `pipenv run update_from_excel `
 ## Adding Decks manually
 
 Make a directory in `./decks` with these files:
- - `metadata.json` - With the name, abbreviation, [icon](http://fontawesome.io/icons/ "Font Awesome"), description, and whether or not the pack is official
+ - `metadata.json` - With the name, abbreviation, [icon](https://icons8.com/line-awesome), description, and whether or not the pack is official
  - `prompts.csv` - Two columns (text and number of cards to pick)
  - `responses.csv` - The texts for the response cards
 
