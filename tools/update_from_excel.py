@@ -15,7 +15,7 @@ METADATA_DEFAULT = {
   'name': '',
   'icon': '',
   'official': False,
-  'description': '- placeholder -'
+  'description': ''
 }
 
 def col_to_md(file_name, sheet_name, col_idx, max_len=float("inf")):
