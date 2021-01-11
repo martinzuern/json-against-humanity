@@ -1,7 +1,7 @@
 {
   "abbr": "human",
-  "description": "- placeholder -",
-  "icon": "",
+  "description": "",
+  "icon": "la-user-edit",
   "name": "Human Pack",
   "official": true
 }

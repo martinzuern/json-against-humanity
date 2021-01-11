@@ -1,7 +1,7 @@
 {
   "abbr": "table-top",
-  "description": "- placeholder -",
-  "icon": "",
+  "description": "",
+  "icon": "la-chess-pawn",
   "name": "TableTop Pack",
   "official": true
 }
