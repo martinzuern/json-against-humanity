@@ -37,14 +37,15 @@ for deck in tqdm(deck_folders):
   
   prompts_file = deck / 'prompts.csv'
   if(prompts_file.exists()):
-    prompts = pd.read_csv(prompts_file, header=0, index_col=False)
+    prompts = pd.read_csv(prompts_file, header=None, index_col=False)
+    prompts[1] = prompts[1].astype('int')
     pack['black'] = list(map(lambda row: append_black({'text': row[0], 'pick': row[1]}), prompts.values.tolist()))
   else: 
     pack['black'] = []
 
   responses_file = deck / 'responses.csv'
   if(responses_file.exists()):
-    responses = pd.read_csv(responses_file, header=0, index_col=False)
+    responses = pd.read_csv(responses_file, header=None, index_col=False)
     pack['white'] = list(map(lambda row: append_white(row[0]), responses.values.tolist()))
   else: 
     pack['white'] = []

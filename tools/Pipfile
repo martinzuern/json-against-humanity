@@ -9,6 +9,7 @@ tqdm = "*"
 xlrd = "*"
 casestyle = "*"
 openpyxl = "*"
+autocorrect = "*"
 
 [dev-packages]
 
@@ -17,4 +18,5 @@ python_version = "3.7"
 
 [scripts]
 update_from_excel = "python ./update_from_excel.py"
+run_checks = "python ./run_checks.py"
 compile_decks = "python ./compile_decks.py"
